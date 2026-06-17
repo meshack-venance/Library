@@ -1,6 +1,5 @@
 package com.shacky.library.repositories;
 
-import com.shacky.library.dtos.BookDto;
 import com.shacky.library.dtos.UserDto;
 import com.shacky.library.entities.Transaction;
 import org.springframework.data.domain.Pageable;

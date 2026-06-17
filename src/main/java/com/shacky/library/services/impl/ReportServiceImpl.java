@@ -3,10 +3,8 @@ package com.shacky.library.services.impl;
 import com.shacky.library.dtos.BookDto;
 import com.shacky.library.dtos.TransactionDto;
 import com.shacky.library.dtos.UserDto;
-import com.shacky.library.entities.Book;
 import com.shacky.library.entities.Transaction;
 import com.shacky.library.entities.User;
-import com.shacky.library.repositories.BookRepository;
 import com.shacky.library.repositories.TransactionRepository;
 import com.shacky.library.repositories.UserRepository;
 import com.shacky.library.services.ReportService;
@@ -26,7 +24,6 @@ import java.util.stream.Collectors;
 public class ReportServiceImpl implements ReportService {
 
     private final TransactionRepository transactionRepository;
-    private final BookRepository bookRepository;
     private final UserRepository userRepository;
 
     @Override
