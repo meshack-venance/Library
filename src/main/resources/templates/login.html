@@ -8,39 +8,73 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link th:href="@{/css/app.css}" rel="stylesheet">
 </head>
-<body class="login-page d-flex align-items-center justify-content-center p-3">
-<main class="login-card">
-    <div class="text-center mb-4">
-        <div class="app-brand-mark mx-auto mb-3">L</div>
-        <h1 class="h3 fw-bold mb-1">Admin Login</h1>
-        <p class="text-muted mb-0">Access the library workspace.</p>
-    </div>
-
-    <div th:if="${param.error}" class="alert alert-danger" role="alert">
-        Invalid username or password.
-    </div>
-
-    <form th:action="@{/admin/login}" method="post">
-        <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" name="username" class="form-control" id="username" required>
-        </div>
-
-        <div class="mb-4">
-            <label for="password" class="form-label">Password</label>
-            <input type="password" name="password" class="form-control" id="password" required>
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100">
-            <i class="bi bi-box-arrow-in-right me-1"></i>Login
-        </button>
-    </form>
-
-    <div class="text-center mt-4">
-        <a th:href="@{/}" class="text-decoration-none">
-            <i class="bi bi-arrow-left me-1"></i>Back to Home
+<body class="login-page">
+<main class="login-shell">
+    <section class="login-visual" aria-label="Library workspace preview">
+        <a th:href="@{/}" class="login-brand">
+            <img th:src="@{/images/library-logo.jpg}" alt="Library logo">
+            <span>
+                <strong>Library</strong>
+                <small>Management System</small>
+            </span>
         </a>
-    </div>
+
+        <div class="login-visual-copy">
+            <span class="login-kicker">Admin workspace</span>
+            <h1>Manage every book, user, and return from one focused desk.</h1>
+            <p>Keep circulation records organized with a calm, modern dashboard built for daily library work.</p>
+        </div>
+    </section>
+
+    <section class="login-panel" aria-label="Admin sign in">
+        <div class="login-card">
+            <div class="login-card-header">
+                <div class="app-brand-mark">L</div>
+                <div>
+                    <p class="login-kicker mb-1">Secure access</p>
+                    <h2>Welcome back</h2>
+                </div>
+            </div>
+
+            <div th:if="${param.error}" class="alert alert-danger d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span>Invalid username or password.</span>
+            </div>
+
+            <div th:if="${param.logout}" class="alert alert-success d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-check-circle-fill"></i>
+                <span>You have been signed out.</span>
+            </div>
+
+            <form th:action="@{/admin/login}" method="post" class="login-form">
+                <div>
+                    <label for="username" class="form-label">Username</label>
+                    <div class="input-icon">
+                        <i class="bi bi-person"></i>
+                        <input type="text" name="username" class="form-control" id="username" autocomplete="username" required autofocus>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-icon">
+                        <i class="bi bi-lock"></i>
+                        <input type="password" name="password" class="form-control" id="password" autocomplete="current-password" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-box-arrow-in-right me-1"></i>Sign in
+                </button>
+            </form>
+
+            <div class="login-footer">
+                <a th:href="@{/}">
+                    <i class="bi bi-arrow-left me-1"></i>Back to Home
+                </a>
+            </div>
+        </div>
+    </section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
