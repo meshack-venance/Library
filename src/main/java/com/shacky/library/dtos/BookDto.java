@@ -1,6 +1,5 @@
 package com.shacky.library.dtos;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,7 +19,6 @@ public class BookDto {
     private String bookNumber;
     private Long borrowCount;
 
-    // Constructor used by JPQL query (if you don't use builder)
     public BookDto(Long id, String title, String subject, String gradeLevel, String author, int publicationYear,
                    String category, double price, Long borrowCount) {
         this.id = id;
@@ -35,7 +33,7 @@ public class BookDto {
     }
 
     public BookDto(Long id, String title, String subject, String gradeLevel, String author, int publicationYear,
-                   String category, double price,String bookNumber, Long borrowCount) {
+                   String category, double price, String bookNumber, Long borrowCount) {
         this.id = id;
         this.title = title;
         this.subject = subject;
@@ -44,8 +42,7 @@ public class BookDto {
         this.publicationYear = publicationYear;
         this.category = category;
         this.price = price;
-        this.bookNumber=bookNumber;
+        this.bookNumber = bookNumber;
         this.borrowCount = borrowCount;
     }
 }
-

@@ -1,5 +1,6 @@
 package com.shacky.library.dtos;
 
+import com.shacky.library.common.util.NameFormatter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,18 +31,6 @@ public class TransactionDto {
     private LocalDate returnDate;
 
     public String getFullName() {
-        if (userFirstName == null &&userMiddleName==null && userLastName == null) {
-            return "";
-        }
-        if (userFirstName == null) {
-            return userMiddleName +" " + userLastName;
-        }
-        if (userMiddleName == null) {
-            return userFirstName +" "+userLastName;
-        }
-        if (userLastName == null) {
-            return userFirstName +" "+userMiddleName;
-        }
-        return userFirstName + " " +userMiddleName+" " + userLastName;
+        return NameFormatter.fullName(userFirstName, userMiddleName, userLastName);
     }
 }
