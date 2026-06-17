@@ -2,52 +2,114 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Secondary School Library System</title>
+    <title>Mwisi Secondary School Library System</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link th:href="@{/css/app.css}" rel="stylesheet">
 </head>
 <body class="home-page">
-<section class="hero-section">
+<header class="home-nav">
+    <a class="home-brand" th:href="@{/}">
+        <img src="/images/library-logo.jpg" alt="Mwisi Secondary School Library logo">
+        <span>
+            <strong>Mwisi Secondary School</strong>
+            <small>Library System</small>
+        </span>
+    </a>
+    <a th:href="@{/admin/login}" class="btn btn-light">
+        <i class="bi bi-box-arrow-in-right me-1"></i>Login
+    </a>
+</header>
+
+<section class="home-hero">
     <div class="container">
-        <div class="hero-content">
-            <div class="page-kicker text-white-50">Mwisi Secondary School</div>
-            <h1 class="hero-title">Library Management System</h1>
-            <p class="lead mt-3 mb-4">A focused workspace for cataloguing books, managing borrowers, tracking returns, and producing library reports.</p>
-            <a th:href="@{/admin/login}" class="btn btn-primary btn-lg px-4">
-                <i class="bi bi-box-arrow-in-right me-1"></i>Login
-            </a>
+        <div class="home-hero-content">
+            <div class="page-kicker text-white-50">School Library Operations</div>
+            <h1 class="home-hero-title">Mwisi Secondary School Library System</h1>
+            <p class="home-hero-copy">
+                A polished workspace for cataloguing books, tracking borrowers, managing returns, and producing useful reports for daily library decisions.
+            </p>
+            <div class="d-flex flex-wrap gap-3 align-items-center">
+                <a th:href="@{/admin/login}" class="btn btn-primary btn-lg px-4">
+                    <i class="bi bi-speedometer2 me-1"></i>Open Dashboard
+                </a>
+                <a href="#features" class="btn btn-outline-light btn-lg px-4">Explore Features</a>
+            </div>
+            <div class="home-metrics" aria-label="Library system highlights">
+                <div>
+                    <strong>Books</strong>
+                    <span>Catalogue-ready</span>
+                </div>
+                <div>
+                    <strong>Users</strong>
+                    <span>Students & staff</span>
+                </div>
+                <div>
+                    <strong>Reports</strong>
+                    <span>PDF exports</span>
+                </div>
+            </div>
         </div>
     </div>
 </section>
 
-<main class="container py-5">
-    <div class="row g-4">
-        <div class="col-md-4">
-            <section class="surface surface-pad h-100">
-                <i class="bi bi-book h2 text-primary"></i>
-                <h2 class="h5 fw-bold mt-3">Book Management</h2>
-                <p class="text-muted mb-0">Organize titles by subject, grade, category, number, author, year, and price.</p>
-            </section>
+<main id="features" class="home-content">
+    <section class="container py-5">
+        <div class="row align-items-end mb-4">
+            <div class="col-lg-7">
+                <div class="page-kicker">Core Tools</div>
+                <h2 class="fw-bold mb-2">Built for everyday library work</h2>
+                <p class="text-muted mb-0">Fast screens, clear records, and simple workflows for the tasks librarians repeat most.</p>
+            </div>
         </div>
-        <div class="col-md-4">
-            <section class="surface surface-pad h-100">
-                <i class="bi bi-people h2 text-primary"></i>
-                <h2 class="h5 fw-bold mt-3">Borrower Records</h2>
-                <p class="text-muted mb-0">Track student and teacher accounts with clean borrowing histories.</p>
-            </section>
-        </div>
-        <div class="col-md-4">
-            <section class="surface surface-pad h-100">
-                <i class="bi bi-bar-chart h2 text-primary"></i>
-                <h2 class="h5 fw-bold mt-3">Reports</h2>
-                <p class="text-muted mb-0">Review active users, top borrowed books, overdue transactions, and export PDFs.</p>
-            </section>
-        </div>
-    </div>
 
-    <footer class="py-5 text-center text-muted">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <section class="home-feature">
+                    <i class="bi bi-book"></i>
+                    <h3>Catalogue Books</h3>
+                    <p>Maintain titles, authors, subjects, grades, categories, numbers, and prices in a clean collection view.</p>
+                </section>
+            </div>
+            <div class="col-md-4">
+                <section class="home-feature">
+                    <i class="bi bi-people"></i>
+                    <h3>Manage Borrowers</h3>
+                    <p>Register students and teachers, then connect every borrowing record to the right person.</p>
+                </section>
+            </div>
+            <div class="col-md-4">
+                <section class="home-feature">
+                    <i class="bi bi-bar-chart"></i>
+                    <h3>Review Reports</h3>
+                    <p>See active users, popular books, overdue items, and export summaries when administration needs them.</p>
+                </section>
+            </div>
+        </div>
+    </section>
+
+    <section class="home-band">
+        <div class="container">
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-5">
+                    <div class="page-kicker">Workflow</div>
+                    <h2 class="fw-bold">From shelf to student and back again.</h2>
+                    <p class="text-muted mb-0">The system keeps the borrowing cycle visible: add books, register users, issue copies, mark returns, and inspect overdue records from one workspace.</p>
+                </div>
+                <div class="col-lg-7">
+                    <div class="workflow-list">
+                        <div><span>01</span><strong>Add catalogue records</strong></div>
+                        <div><span>02</span><strong>Register borrowers</strong></div>
+                        <div><span>03</span><strong>Create transactions</strong></div>
+                        <div><span>04</span><strong>Export reports</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="container py-5 text-center text-muted">
         <p class="mb-1">Secondary School Library Office, P.O. Box 173, Igunga, Tanzania</p>
         <p class="mb-1">Phone: +255 765 566 773</p>
         <p class="mb-0">&copy; 2026 Mwisi Secondary School. All rights reserved.</p>
