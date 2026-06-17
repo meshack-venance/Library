@@ -14,6 +14,24 @@ A Spring Boot MVC web application for managing a school library. The app provide
 - PostgreSQL-backed persistence
 - Docker support
 
+## Screenshots
+
+### Home Page
+
+![Home page](docs/screenshots/homepage.png)
+
+### Login Page
+
+![Login page](docs/screenshots/loginpage.png)
+
+### Dashboard
+
+![Dashboard](docs/screenshots/dashboard.png)
+
+### Reports
+
+![Reports dashboard](docs/screenshots/reports.png)
+
 ## Tech Stack
 
 - Java 17
