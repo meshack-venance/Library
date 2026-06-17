@@ -15,13 +15,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     long countByStatus(String status);
 
-    // Find transactions by user ID
     List<Transaction> findByUserId(Long userId);
 
-    // Find transactions by book ID
     List<Transaction> findByBookId(Long bookId);
 
-    // Find overdue transactions (due date before now and not returned)
     List<Transaction> findByReturnDateBeforeAndStatusNot(LocalDate date, String status);
 
     List<Transaction> findByStatus(String status);
@@ -37,7 +34,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("SELECT COUNT(t) FROM Transaction t")
     long countAllTransactions();
 
-    // 🔍 Search by user first or last name (case-insensitive)
     @Query("SELECT t FROM Transaction t WHERE " +
             "LOWER(t.user.firstName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
             "LOWER(t.user.lastName) LIKE LOWER(CONCAT('%', :search, '%'))")

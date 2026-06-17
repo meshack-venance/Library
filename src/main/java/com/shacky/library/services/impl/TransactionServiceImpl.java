@@ -129,7 +129,6 @@ public class TransactionServiceImpl implements TransactionService {
                 .collect(Collectors.toList());
     }
 
-    // LIVE SEARCH: return list of { id, name } maps
     @Override
     public List<Map<String, Object>> searchBookTitles(String query) {
         List<Long> borrowedBookIds = transactionRepository.findByStatus("borrowed")
@@ -139,7 +138,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         return bookRepository.findByTitleContainingIgnoreCase(query)
                 .stream()
-                .filter(book -> !borrowedBookIds.contains(book.getId())) //  Exclude borrowed books
+                .filter(book -> !borrowedBookIds.contains(book.getId()))
                 .map(book -> {
                     Map<String, Object> result = new java.util.HashMap<>();
                     result.put("id", book.getId());
@@ -161,7 +160,7 @@ public class TransactionServiceImpl implements TransactionService {
                 .map(user -> {
                     Map<String, Object> result = new java.util.HashMap<>();
                     result.put("id", user.getId());
-                    result.put("name", user.getFirstName() + " " +user.getMiddleName()+ " " + user.getLastName());
+                    result.put("name", user.getFirstName() + " " + user.getMiddleName() + " " + user.getLastName());
                     return result;
                 })
                 .collect(Collectors.toList());

@@ -16,9 +16,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +26,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
-        // Check for duplicates by full name
         Optional<User> existingUser = userRepository.findByFirstNameAndMiddleNameAndLastName(
                 userDto.getFirstName(),
                 userDto.getMiddleName(),
@@ -108,7 +105,6 @@ public class UserServiceImpl implements UserService {
                         .clsRoom(clsRoom)
                         .build();
 
-                // Avoid duplicate entry
                 if (!existsByFullName(firstName, middleName, lastName)) {
                     createUser(userDto);
                 }

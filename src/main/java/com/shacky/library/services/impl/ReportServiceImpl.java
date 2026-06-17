@@ -14,7 +14,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,7 +31,6 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public List<BookDto> getTopBorrowedBooks() {
-        // Group transactions by book title and grade level
         Map<String, Long> borrowCountMap = transactionRepository.findAll().stream()
                 .filter(tx -> tx.getBook() != null &&
                         (tx.getStatus().equalsIgnoreCase("BORROWED") || tx.getStatus().equalsIgnoreCase("RETURNED")))
@@ -36,7 +39,6 @@ public class ReportServiceImpl implements ReportService {
                         Collectors.counting()
                 ));
 
-        // Sort by borrow count descending and take top 5
         return borrowCountMap.entrySet().stream()
                 .sorted(Map.Entry.<String, Long>comparingByValue(Comparator.reverseOrder()))
                 .limit(5)
@@ -56,11 +58,9 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public List<UserDto> getTopActiveUsers() {
-        // Count how many times each user ID appears across all transactions
         Map<Long, Long> userBorrowCountMap = transactionRepository.findAll().stream()
                 .collect(Collectors.groupingBy(t -> t.getUser().getId(), Collectors.counting()));
 
-        // Sort by total borrowed descending and take top 5
         return userBorrowCountMap.entrySet().stream()
                 .sorted(Map.Entry.<Long, Long>comparingByValue(Comparator.reverseOrder()))
                 .limit(5)
@@ -84,7 +84,6 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public List<TransactionDto> getOverdueTransactions() {
-        // Find transactions with returnDate before today and status not "RETURNED"
         List<Transaction> overdueTx = transactionRepository.findByReturnDateBeforeAndStatusNot(LocalDate.now(), "RETURNED");
 
         return overdueTx.stream()

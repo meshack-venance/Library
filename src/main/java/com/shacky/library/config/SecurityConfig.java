@@ -1,6 +1,5 @@
 package com.shacky.library.config;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,7 +27,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/css/**", "/images/**", "/js/**").permitAll()
-                        .requestMatchers("/users/**","/books/**","/transactions/**","/reports/**","/admin/**").authenticated()
+                        .requestMatchers("/users/**", "/books/**", "/transactions/**", "/reports/**", "/admin/**").authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/admin/login")

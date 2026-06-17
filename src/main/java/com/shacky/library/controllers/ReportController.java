@@ -7,6 +7,8 @@ import com.shacky.library.services.ReportService;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
@@ -24,6 +25,8 @@ import java.util.List;
 @RequestMapping("/reports")
 @RequiredArgsConstructor
 public class ReportController {
+
+    private static final Logger log = LoggerFactory.getLogger(ReportController.class);
 
     private final ReportService reportService;
 
@@ -44,7 +47,6 @@ public class ReportController {
     }
 
     @GetMapping("/download")
-    @ResponseBody
     public ResponseEntity<byte[]> downloadPdfReport() {
         try {
             List<BookDto> topBorrowedBooks = reportService.getTopBorrowedBooks();
@@ -57,7 +59,6 @@ public class ReportController {
             PdfWriter.getInstance(document, out);
             document.open();
 
-            // Colors and fonts
             BaseColor primaryColor = new BaseColor(13, 110, 253);
             BaseColor successColor = new BaseColor(25, 135, 84);
             BaseColor dangerColor = new BaseColor(220, 53, 69);
@@ -70,7 +71,6 @@ public class ReportController {
             Font tableBodyFont = FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK);
             Font smallGrayFont = FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 10, BaseColor.GRAY);
 
-            // Title
             Paragraph title = new Paragraph("Library Reports", titleFont);
             title.setAlignment(Element.ALIGN_CENTER);
             document.add(title);
@@ -85,7 +85,6 @@ public class ReportController {
             subtitle.setSpacingAfter(20);
             document.add(subtitle);
 
-            // Summary
             PdfPTable summaryTable = new PdfPTable(1);
             summaryTable.setWidthPercentage(40);
             summaryTable.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -109,7 +108,6 @@ public class ReportController {
             summaryTable.setSpacingAfter(25);
             document.add(summaryTable);
 
-            // Top Borrowed Books section
             document.add(new Paragraph("Top Borrowed Books by Title & Grade", sectionTitleFont));
             document.add(new Paragraph(" "));
             PdfPTable bookTable = new PdfPTable(new float[]{1, 5, 2, 2});
@@ -136,7 +134,6 @@ public class ReportController {
 
             document.add(new Paragraph(" "));
 
-            // Top Active Users section
             document.add(new Paragraph("Top Active Users", new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD, successColor)));
             document.add(new Paragraph(" "));
             PdfPTable userTable = new PdfPTable(new float[]{1, 5, 6, 2});
@@ -151,7 +148,6 @@ public class ReportController {
             document.add(userTable);
             document.add(new Paragraph(" "));
 
-            // Overdue Transactions
             document.add(new Paragraph("Overdue Transactions", new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD, dangerColor)));
             document.add(new Paragraph(" "));
             PdfPTable txTable = new PdfPTable(new float[]{1, 5, 5, 3, 3});
@@ -170,7 +166,6 @@ public class ReportController {
             document.add(txTable);
             document.add(Chunk.NEWLINE);
 
-            // Signature area
             PdfPTable signatureTable = new PdfPTable(2);
             signatureTable.setWidthPercentage(80);
             signatureTable.setSpacingBefore(50);
@@ -203,7 +198,7 @@ public class ReportController {
                     .body(pdfBytes);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Failed to generate library PDF report", e);
             return ResponseEntity.internalServerError().build();
         }
     }
