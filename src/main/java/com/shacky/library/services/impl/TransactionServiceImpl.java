@@ -6,6 +6,7 @@ import com.shacky.library.dtos.TransactionDto;
 import com.shacky.library.entities.Book;
 import com.shacky.library.entities.Transaction;
 import com.shacky.library.entities.User;
+import com.shacky.library.mappers.TransactionMapper;
 import com.shacky.library.repositories.BookRepository;
 import com.shacky.library.repositories.TransactionRepository;
 import com.shacky.library.repositories.UserRepository;
@@ -30,25 +31,6 @@ public class TransactionServiceImpl implements TransactionService {
     @Autowired
     private UserRepository userRepository;
 
-    private TransactionDto mapToDto(Transaction transaction) {
-        return TransactionDto.builder()
-                .id(transaction.getId())
-                .bookId(transaction.getBook().getId())
-                .bookTitle(transaction.getBook().getTitle())
-                .bookSubject(transaction.getBook().getSubject())
-                .bookNumber(transaction.getBook().getBookNumber())
-                .bookGradeLevel(transaction.getBook().getGradeLevel())
-                .userId(transaction.getUser().getId())
-                .userFirstName(transaction.getUser().getFirstName())
-                .userMiddleName(transaction.getUser().getMiddleName())
-                .userLastName(transaction.getUser().getLastName())
-                .userEmail(transaction.getUser().getEmail())
-                .status(transaction.getStatus())
-                .borrowDate(transaction.getBorrowDate())
-                .returnDate(transaction.getReturnDate())
-                .build();
-    }
-
     private Transaction mapToEntity(TransactionDto dto) {
         Book book = bookRepository.findById(dto.getBookId())
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + dto.getBookId()));
@@ -56,13 +38,7 @@ public class TransactionServiceImpl implements TransactionService {
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + dto.getUserId()));
 
-        return Transaction.builder()
-                .book(book)
-                .user(user)
-                .status(dto.getStatus())
-                .borrowDate(dto.getBorrowDate())
-                .returnDate(dto.getReturnDate())
-                .build();
+        return TransactionMapper.toEntity(dto, book, user);
     }
 
     @Override
@@ -73,7 +49,7 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setBorrowDate(LocalDate.now());
         Transaction saved = transactionRepository.save(transaction);
         bookRepository.save(book);
-        return mapToDto(saved);
+        return TransactionMapper.toDto(saved);
     }
 
     @Override
@@ -85,13 +61,13 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setBorrowDate(dto.getBorrowDate());
         transaction.setReturnDate(dto.getReturnDate());
 
-        return mapToDto(transactionRepository.save(transaction));
+        return TransactionMapper.toDto(transactionRepository.save(transaction));
     }
 
     @Override
     public TransactionDto getTransactionById(Long id) {
         return transactionRepository.findById(id)
-                .map(this::mapToDto)
+                .map(TransactionMapper::toDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction not found with ID: " + id));
     }
 
@@ -99,7 +75,7 @@ public class TransactionServiceImpl implements TransactionService {
     public List<TransactionDto> getAllTransactions() {
         return transactionRepository.findAll()
                 .stream()
-                .map(this::mapToDto)
+                .map(TransactionMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -117,7 +93,7 @@ public class TransactionServiceImpl implements TransactionService {
     public List<TransactionDto> getTransactionsByUserId(Long userId) {
         return transactionRepository.findByUserId(userId)
                 .stream()
-                .map(this::mapToDto)
+                .map(TransactionMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -125,7 +101,7 @@ public class TransactionServiceImpl implements TransactionService {
     public List<TransactionDto> getTransactionsByBookId(Long bookId) {
         return transactionRepository.findByBookId(bookId)
                 .stream()
-                .map(this::mapToDto)
+                .map(TransactionMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -144,14 +120,14 @@ public class TransactionServiceImpl implements TransactionService {
         Book book = transaction.getBook();
         bookRepository.save(book);
 
-        return mapToDto(transactionRepository.save(transaction));
+        return TransactionMapper.toDto(transactionRepository.save(transaction));
     }
 
     @Override
     public List<TransactionDto> searchTransactionsByUser(String search) {
         return transactionRepository.searchByUserName(search)
                 .stream()
-                .map(this::mapToDto)
+                .map(TransactionMapper::toDto)
                 .collect(Collectors.toList());
     }
 
