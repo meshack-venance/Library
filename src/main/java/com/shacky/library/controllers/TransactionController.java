@@ -2,7 +2,7 @@ package com.shacky.library.controllers;
 
 import com.shacky.library.dtos.TransactionDto;
 import com.shacky.library.services.TransactionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +12,10 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/transactions")
+@RequiredArgsConstructor
 public class TransactionController {
 
-    @Autowired
-    private TransactionService transactionService;
+    private final TransactionService transactionService;
 
     // List all transactions + Search by user
     @GetMapping
