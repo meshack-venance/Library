@@ -6,7 +6,6 @@ import com.shacky.library.mappers.BookMapper;
 import com.shacky.library.repositories.BookRepository;
 import com.shacky.library.services.BookService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -22,8 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BookServiceImp implements BookService {
 
-    @Autowired
-    private  BookRepository bookRepository;
+    private final BookRepository bookRepository;
 
     @Override
     public List<BookDto> getAllBooks() {

@@ -5,21 +5,17 @@ import com.shacky.library.repositories.TransactionRepository;
 import com.shacky.library.repositories.UserRepository;
 import com.shacky.library.services.LibraryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class LibraryServiceImpl implements LibraryService {
 
-    @Autowired
-    private BookRepository bookRepository;
+    private final BookRepository bookRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private TransactionRepository transactionRepository;
+    private final TransactionRepository transactionRepository;
 
     @Override
     public long countBooks() {

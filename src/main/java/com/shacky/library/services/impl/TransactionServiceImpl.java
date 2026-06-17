@@ -11,7 +11,7 @@ import com.shacky.library.repositories.BookRepository;
 import com.shacky.library.repositories.TransactionRepository;
 import com.shacky.library.repositories.UserRepository;
 import com.shacky.library.services.TransactionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,16 +20,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
 
-    @Autowired
-    private TransactionRepository transactionRepository;
+    private final TransactionRepository transactionRepository;
 
-    @Autowired
-    private BookRepository bookRepository;
+    private final BookRepository bookRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     private Transaction mapToEntity(TransactionDto dto) {
         Book book = bookRepository.findById(dto.getBookId())
