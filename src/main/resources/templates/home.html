@@ -2,80 +2,57 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Secondary School Library System - Home</title>
+    <title>Secondary School Library System</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/app.css}" rel="stylesheet">
 </head>
-<body class="bg-light">
-
-<div class="container py-5">
-
-    <!-- Logo / Banner -->
-    <div class="text-center mb-5">
-        <img src="/images/library-logo.jpg" alt="Library Logo" class="mb-3" style="max-height: 120px;">
-        <h1 class="text-primary fw-bold">📘 Mwisi Secondary School Library System</h1>
-        <p class="text-muted lead">A Smart Way to Manage School Library Resources in Tanzania</p>
+<body class="home-page">
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <div class="page-kicker text-white-50">Mwisi Secondary School</div>
+            <h1 class="hero-title">Library Management System</h1>
+            <p class="lead mt-3 mb-4">A focused workspace for cataloguing books, managing borrowers, tracking returns, and producing library reports.</p>
+            <a th:href="@{/admin/login}" class="btn btn-primary btn-lg px-4">
+                <i class="bi bi-box-arrow-in-right me-1"></i>Login
+            </a>
+        </div>
     </div>
+</section>
 
-    <!-- System Overview -->
-    <div class="row justify-content-center mb-5">
-        <div class="col-lg-10">
-            <div class="row row-cols-1 row-cols-md-3 g-4 text-center">
-                <div class="col">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title text-primary">📚 Book Management</h5>
-                            <p class="card-text">Easily add, update, and categorize library books for students and teachers.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title text-success">👥 User Tracking</h5>
-                            <p class="card-text">Track student and staff borrowing records and access history with ease.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title text-warning">📈 Reports</h5>
-                            <p class="card-text">Generate borrowing reports and summaries for school administrators.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<main class="container py-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <section class="surface surface-pad h-100">
+                <i class="bi bi-book h2 text-primary"></i>
+                <h2 class="h5 fw-bold mt-3">Book Management</h2>
+                <p class="text-muted mb-0">Organize titles by subject, grade, category, number, author, year, and price.</p>
+            </section>
+        </div>
+        <div class="col-md-4">
+            <section class="surface surface-pad h-100">
+                <i class="bi bi-people h2 text-primary"></i>
+                <h2 class="h5 fw-bold mt-3">Borrower Records</h2>
+                <p class="text-muted mb-0">Track student and teacher accounts with clean borrowing histories.</p>
+            </section>
+        </div>
+        <div class="col-md-4">
+            <section class="surface surface-pad h-100">
+                <i class="bi bi-bar-chart h2 text-primary"></i>
+                <h2 class="h5 fw-bold mt-3">Reports</h2>
+                <p class="text-muted mb-0">Review active users, top borrowed books, overdue transactions, and export PDFs.</p>
+            </section>
         </div>
     </div>
 
-    <!-- Login Button -->
-    <div class="text-center mb-5">
-        <a th:href="@{/admin/login}" class="btn btn-primary btn-lg px-5">Login to Access System</a>
-    </div>
-
-    <!-- Contact Section -->
-    <div class="row justify-content-center">
-        <div class="col-lg-8 text-center">
-            <h5 class="text-dark mb-3">📞 Contact Us</h5>
-            <p class="mb-1">Secondary School Library Office</p>
-            <p class="mb-1">P.O. Box 173, Igunga, Tanzania</p>
-            <p class="mb-1">Phone: +255 765 566 773</p>
-            <p>Email: <a href="mailto:sifael.zs@gmail.com">sifael.zs@gmail.com</a></p>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="text-center text-muted mt-5">
-        <p class="mb-1">&copy; 2025 Mwisi Secondary School, Tanzania. All rights reserved.</p>
-        <p class="small mb-0">
-            Developed by <strong>Eng. Meshack Venance Bundala</strong> &mdash;
-            <a href="mailto:meshackvenance7@gmail.com">meshackvenance7@gmail.com</a> |
-            <span>+255 688 134 882</span>
-        </p>
-    </div>
-
-</div>
+    <footer class="py-5 text-center text-muted">
+        <p class="mb-1">Secondary School Library Office, P.O. Box 173, Igunga, Tanzania</p>
+        <p class="mb-1">Phone: +255 765 566 773</p>
+        <p class="mb-0">&copy; 2026 Mwisi Secondary School. All rights reserved.</p>
+    </footer>
+</main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

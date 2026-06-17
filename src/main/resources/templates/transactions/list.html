@@ -2,118 +2,94 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title th:text="${title}">Transaction List</title>
-
-    <!-- Bootstrap 5 CSS -->
+    <title th:text="${title}">Transactions</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/app.css}" rel="stylesheet">
 </head>
-<body class="bg-light">
-
-<div class="container-fluid">
-    <!-- Top bar with toggle button on small screens -->
-    <div class="d-md-none p-2 bg-white border-bottom">
-        <button class="btn btn-outline-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
-            ☰ Menu
-        </button>
-    </div>
-
-    <div class="row min-vh-100">
-        <!-- Offcanvas Sidebar for Small Screens -->
-        <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="sidebarMenu">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title text-primary">Library System</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+<body>
+<div class="app-shell d-lg-flex">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <main class="app-main">
+        <header class="page-header">
+            <div>
+                <div class="page-kicker">Circulation</div>
+                <h1 class="page-title" th:text="${title}">Transactions</h1>
+                <p class="page-subtitle">Track borrowed books, due dates, returns, and user history.</p>
             </div>
-            <div class="offcanvas-body">
-                <ul class="nav flex-column">
-                    <li class="nav-item"><a class="nav-link" th:href="@{/admin}">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/books}">Books</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/users}">Users</a></li>
-                    <li class="nav-item"><a class="nav-link active fw-bold" th:href="@{/transactions}">Transactions</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/reports}">Reports</a></li>
-                </ul>
+            <a class="btn btn-primary" th:href="@{/transactions/new}">
+                <i class="bi bi-plus-lg me-1"></i>New Transaction
+            </a>
+        </header>
+
+        <section class="surface mb-4">
+            <div class="surface-pad">
+                <form method="get" th:action="@{/transactions}">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                        <input type="text" name="search" class="form-control" placeholder="Search by user name..." th:value="${param.search}">
+                        <button class="btn btn-primary" type="submit">Search</button>
+                        <a class="btn btn-outline-secondary" th:href="@{/transactions}">Clear</a>
+                    </div>
+                </form>
             </div>
-        </div>
+        </section>
 
-        <!-- Static Sidebar for Medium+ Screens -->
-        <nav class="col-md-3 col-lg-2 d-none d-md-block bg-white border-end py-4">
-            <h4 class="text-primary text-center">Library System</h4>
-            <ul class="nav flex-column mt-4">
-                <li class="nav-item"><a class="nav-link" th:href="@{/admin}">Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/books}">Books</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/users}">Users</a></li>
-                <li class="nav-item"><a class="nav-link active fw-bold" th:href="@{/transactions}">Transactions</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/reports}">Reports</a></li>
-            </ul>
-        </nav>
-
-        <!-- Main Content -->
-        <main class="col-md-9 col-lg-10 px-md-5 py-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="text-primary" th:text="${title}">Transaction List</h2>
-                <a class="btn btn-success" th:href="@{/transactions/new}">Add New Transaction</a>
-            </div>
-
-            <!-- Search Form -->
-            <form class="mb-3" method="get" th:action="@{/transactions}">
-                <div class="input-group">
-                    <input type="text" name="search" class="form-control" placeholder="Search by user name..." th:value="${param.search}">
-                    <button class="btn btn-outline-primary" type="submit">Search</button>
-                    <a class="btn btn-outline-secondary" th:href="@{/transactions}">Clear</a>
-                </div>
-            </form>
-
-            <!-- Transactions Table -->
-            <div class="table-responsive shadow-sm rounded">
-                <table class="table table-bordered table-hover table-striped">
-                    <thead class="table-dark">
+        <section class="surface">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
                     <tr>
                         <th>#</th>
-                        <th>Book Title</th>
-                        <th>Book Subject</th>
-                        <th>Book GradeLevel</th>
-                        <th>Book Number</th>
+                        <th>Book</th>
+                        <th>Subject</th>
+                        <th>Grade</th>
+                        <th>Number</th>
                         <th>User</th>
                         <th>Status</th>
                         <th>Borrow Date</th>
                         <th>Return Date</th>
-                        <th>Actions</th>
+                        <th class="text-end">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="tx, iterStat : ${transactions}">
                         <th scope="row" th:text="${iterStat.count}">1</th>
-                        <td th:text="${tx.bookTitle}">Book Title</td>
+                        <td class="fw-semibold" th:text="${tx.bookTitle}">Book Title</td>
                         <td th:text="${tx.bookSubject}">Book Subject</td>
-                        <td th:text="${tx.bookGradeLevel}">Book GradeLeve</td>
+                        <td><span class="badge text-bg-light" th:text="${tx.bookGradeLevel}">Grade</span></td>
                         <td th:text="${tx.bookNumber}">Book Number</td>
                         <td th:text="${tx.fullName}">User Full Name</td>
-                        <td th:text="${tx.status}">borrowed</td>
+                        <td>
+                            <span class="badge-soft"
+                                  th:classappend="${tx.status == 'borrowed'} ? ' badge-borrowed' : ' badge-returned'"
+                                  th:text="${tx.status}">borrowed</span>
+                        </td>
                         <td th:text="${tx.borrowDate}">2025-07-19</td>
                         <td th:text="${tx.returnDate}">2025-08-01</td>
                         <td>
-                            <div class="btn-group" role="group">
-                                <a th:href="@{'/transactions/edit/' + ${tx.id}}" class="btn btn-sm btn-warning">Edit</a>
-                                <a th:href="@{'/transactions/delete/' + ${tx.id}}" class="btn btn-sm btn-danger"
-                                   onclick="return confirm('Are you sure you want to delete this transaction?')">Delete</a>
+                            <div class="d-flex justify-content-end gap-2">
+                                <a th:href="@{'/transactions/edit/' + ${tx.id}}" class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></a>
+                                <a th:href="@{'/transactions/delete/' + ${tx.id}}" class="btn btn-sm btn-danger" title="Delete"
+                                   onclick="return confirm('Are you sure you want to delete this transaction?')"><i class="bi bi-trash"></i></a>
                                 <a th:if="${tx.status == 'borrowed'}"
                                    th:href="@{'/transactions/return/' + ${tx.id}}"
-                                   class="btn btn-sm btn-info">Return</a>
+                                   class="btn btn-sm btn-outline-primary" title="Return"><i class="bi bi-arrow-return-left"></i></a>
                             </div>
                         </td>
                     </tr>
                     <tr th:if="${transactions.size() == 0}">
-                        <td colspan="7" class="text-center text-muted">No transactions found.</td>
+                        <td colspan="10">
+                            <div class="empty-state">No transactions found.</div>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
             </div>
-        </main>
-    </div>
+        </section>
+    </main>
 </div>
-
-<!-- Bootstrap 5 JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

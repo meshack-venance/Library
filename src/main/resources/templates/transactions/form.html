@@ -5,58 +5,42 @@
     <title th:text="${title}">Transaction Form</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <style>
-        .autocomplete-suggestions {
-            position: absolute;
-            z-index: 1000;
-            width: 100%;
-            max-height: 200px;
-            overflow-y: auto;
-            cursor: pointer;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/app.css}" rel="stylesheet">
 </head>
-<body class="bg-light">
+<body>
+<div class="app-shell d-lg-flex">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <main class="app-main">
+        <header class="page-header">
+            <div>
+                <div class="page-kicker">Circulation</div>
+                <h1 class="page-title" th:text="${title}">Transaction Form</h1>
+                <p class="page-subtitle">Issue books, update borrowing records, and set expected return dates.</p>
+            </div>
+            <a th:href="@{/transactions}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Back
+            </a>
+        </header>
 
-<div class="container my-5">
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0" th:text="${title}">Transaction Form</h4>
-        </div>
+        <section class="surface surface-pad">
+            <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
 
-        <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
-
-        <div class="card-body">
             <form th:action="${transactionDto.id} == null ? @{/transactions} : @{/transactions/{id}(id=${transactionDto.id})}"
                   th:object="${transactionDto}" method="post">
-
-                <!-- Book Live Search -->
-                <h5 class="text-primary">Book</h5>
-                <div class="row g-3 mb-4">
-                    <div class="col-12 position-relative">
+                <div class="row g-4">
+                    <div class="col-lg-6 position-relative">
                         <label for="bookTitle" class="form-label">Book Title</label>
-                        <input type="text" id="bookTitle" name="bookTitle"
-                               th:field="*{bookTitle}" class="form-control" autocomplete="off" required />
+                        <input type="text" id="bookTitle" name="bookTitle" th:field="*{bookTitle}" class="form-control" autocomplete="off" required />
                         <input type="hidden" id="bookId" name="bookId" th:field="*{bookId}" />
                         <ul class="list-group autocomplete-suggestions" id="bookSuggestions"></ul>
                     </div>
-                </div>
-
-                <!-- User Live Search -->
-                <h5 class="text-primary">User</h5>
-                <div class="row g-3 mb-4">
-                    <div class="col-12 position-relative">
+                    <div class="col-lg-6 position-relative">
                         <label for="userName" class="form-label">User Name</label>
-                        <input type="text" id="userName" name="userName"
-                               th:field="*{userFirstName}" class="form-control" autocomplete="off" required />
+                        <input type="text" id="userName" name="userName" th:field="*{userFirstName}" class="form-control" autocomplete="off" required />
                         <input type="hidden" id="userId" name="userId" th:field="*{userId}" />
                         <ul class="list-group autocomplete-suggestions" id="userSuggestions"></ul>
                     </div>
-                </div>
-
-                <!-- Transaction Info -->
-                <h5 class="text-primary">Transaction Info</h5>
-                <div class="row g-3 mb-4">
                     <div class="col-md-4">
                         <label for="status" class="form-label">Status</label>
                         <select id="status" th:field="*{status}" class="form-select" required>
@@ -75,17 +59,17 @@
                     </div>
                 </div>
 
-                <!-- Submit -->
-                <div class="d-flex justify-content-end gap-2">
-                    <button type="submit" class="btn btn-success">Save</button>
+                <div class="d-flex justify-content-end gap-2 mt-4">
                     <a th:href="@{/transactions}" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check2 me-1"></i>Save Transaction
+                    </button>
                 </div>
             </form>
-        </div>
-    </div>
+        </section>
+    </main>
 </div>
 
-<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     function setupLiveSearch(inputId, listId, hiddenId, endpoint, labelFormatter) {
@@ -132,24 +116,20 @@
         setupLiveSearch(
             'bookTitle', 'bookSuggestions', 'bookId',
             '/transactions/search/books',
-            book => `${book.name} (by ${book.author}, ${book.subject},${book.grade}, Number ${book.number})`
+            book => `${book.name} (by ${book.author}, ${book.subject}, ${book.grade}, Number ${book.number})`
         );
-setupLiveSearch(
-    'userName',
-    'userSuggestions',
-    'userId',
-    '/transactions/search/users',
-    user => `${user.name}`  );
-
+        setupLiveSearch(
+            'userName', 'userSuggestions', 'userId',
+            '/transactions/search/users',
+            user => `${user.name}`
+        );
 
         const borrowDateInput = document.getElementById('borrowDate');
         const returnDateInput = document.getElementById('returnDate');
         const form = document.querySelector('form');
-
-        // Today's date
         const today = new Date().toISOString().split('T')[0];
-        borrowDateInput.setAttribute('min', today);
 
+        borrowDateInput.setAttribute('min', today);
         borrowDateInput.addEventListener('change', () => {
             returnDateInput.setAttribute('min', borrowDateInput.value);
         });
@@ -168,11 +148,9 @@ setupLiveSearch(
             if (returnDate < borrowDate) {
                 alert("Return date cannot be earlier than borrow date.");
                 e.preventDefault();
-                return;
             }
         });
     });
 </script>
-
 </body>
 </html>

@@ -2,72 +2,47 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${title}">Book List</title>
+    <title th:text="${title}">Books</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/app.css}" rel="stylesheet">
 </head>
-<body class="bg-light">
-
-<div class="container-fluid">
-    <!-- Top bar with toggle button on small screens -->
-    <div class="d-md-none p-2 bg-white border-bottom">
-        <button class="btn btn-outline-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
-            ☰ Menu
-        </button>
-    </div>
-
-    <div class="row">
-        <!-- Offcanvas Sidebar for Small Screens -->
-        <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="sidebarMenu">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title text-primary">Library System</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+<body>
+<div class="app-shell d-lg-flex">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <main class="app-main">
+        <header class="page-header">
+            <div>
+                <div class="page-kicker">Collection</div>
+                <h1 class="page-title" th:text="${title}">Books</h1>
+                <p class="page-subtitle">Manage titles, copies, categories, and grade-level resources.</p>
             </div>
-            <div class="offcanvas-body">
-                <ul class="nav flex-column">
-                    <li class="nav-item"><a class="nav-link" th:href="@{/admin}">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/books}">Books</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/users}">Users</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/transactions}">Transactions</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/reports}">Reports</a></li>
-                </ul>
+            <a class="btn btn-primary" th:href="@{/books/new}">
+                <i class="bi bi-plus-lg me-1"></i>Add Book
+            </a>
+        </header>
+
+        <section class="surface">
+            <div class="surface-pad border-bottom">
+                <form method="get" class="row g-2 align-items-center">
+                    <div class="col-auto">
+                        <label for="bookPageSize" class="form-label mb-0 text-muted fw-semibold">Rows</label>
+                    </div>
+                    <div class="col-auto">
+                        <select id="bookPageSize" class="form-select" name="size" onchange="this.form.submit()">
+                            <option th:selected="${size == 5}" value="5">5</option>
+                            <option th:selected="${size == 10}" value="10">10</option>
+                            <option th:selected="${size == 20}" value="20">20</option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="page" th:value="${currentPage}" />
+                </form>
             </div>
-        </div>
-
-        <!-- Static Sidebar for Medium+ Screens -->
-        <nav class="col-md-3 col-lg-2 d-none d-md-block bg-white border-end py-4">
-            <h4 class="text-primary text-center">Library System</h4>
-            <ul class="nav flex-column mt-4">
-                <li class="nav-item"><a class="nav-link" th:href="@{/admin}">Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/books}">Books</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/users}">Users</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/transactions}">Transactions</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/reports}">Reports</a></li>
-            </ul>
-        </nav>
-
-        <!-- Main Content Area -->
-        <main class="col-md-9 col-lg-10 px-4 py-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="text-primary" th:text="${title}">Book List</h2>
-                <a class="btn btn-success" th:href="@{/books/new}">Add New Book</a>
-            </div>
-
-            <!-- Page size selector -->
-            <form method="get" class="mb-3">
-                <label>Show
-                    <select name="size" onchange="this.form.submit()">
-                        <option th:selected="${size == 5}" value="5">5</option>
-                        <option th:selected="${size == 10}" value="10">10</option>
-                        <option th:selected="${size == 20}" value="20">20</option>
-                    </select> entries
-                </label>
-                <input type="hidden" name="page" th:value="${currentPage}" />
-            </form>
 
             <div class="table-responsive">
-                <table class="table table-bordered table-hover table-striped shadow-sm">
-                    <thead class="table-dark">
+                <table class="table table-hover align-middle">
+                    <thead>
                     <tr>
                         <th>#</th>
                         <th>Title</th>
@@ -78,59 +53,54 @@
                         <th>Category</th>
                         <th>Number</th>
                         <th>Price</th>
-                        <th>Actions</th>
+                        <th class="text-end">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="book, iterStat : ${bookPage.content}">
                         <td th:text="${iterStat.index + 1 + (currentPage * size)}">1</td>
-                        <td th:text="${book.title}">Title</td>
+                        <td class="fw-semibold" th:text="${book.title}">Title</td>
                         <td th:text="${book.subject}">Subject</td>
                         <td th:text="${book.author}">Author</td>
-                        <td th:text="${book.gradeLevel}">Grade</td>
+                        <td><span class="badge text-bg-light" th:text="${book.gradeLevel}">Grade</span></td>
                         <td th:text="${book.publicationYear}">2023</td>
                         <td th:text="${book.category}">Category</td>
                         <td th:text="${book.bookNumber}">Number</td>
                         <td th:text="${book.price}">100.00</td>
                         <td>
-                            <div class="btn-group" role="group">
-                                <a th:href="@{'/books/' + ${book.id}}" class="btn btn-sm btn-info text-white">View</a>
-                                <a th:href="@{'/books/edit/' + ${book.id}}" class="btn btn-sm btn-warning">Edit</a>
-                                <a th:href="@{'/books/delete/' + ${book.id}}" class="btn btn-sm btn-danger"
-                                   onclick="return confirm('Are you sure you want to delete this book?')">Delete</a>
+                            <div class="d-flex justify-content-end gap-2">
+                                <a th:href="@{'/books/' + ${book.id}}" class="btn btn-sm btn-outline-primary" title="View"><i class="bi bi-eye"></i></a>
+                                <a th:href="@{'/books/edit/' + ${book.id}}" class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></a>
+                                <a th:href="@{'/books/delete/' + ${book.id}}" class="btn btn-sm btn-danger" title="Delete"
+                                   onclick="return confirm('Are you sure you want to delete this book?')"><i class="bi bi-trash"></i></a>
                             </div>
                         </td>
                     </tr>
                     <tr th:if="${bookPage.totalElements == 0}">
-                        <td colspan="11" class="text-center text-muted">No books found.</td>
+                        <td colspan="10">
+                            <div class="empty-state">No books found.</div>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
             </div>
+        </section>
 
-            <!-- Pagination -->
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center mt-4">
-                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                        <a class="page-link" th:href="@{/books(page=${currentPage - 1}, size=${size})}">Previous</a>
-                    </li>
-
-                    <li class="page-item"
-                        th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-                        th:classappend="${i == currentPage} ? 'active'">
-                        <a class="page-link" th:href="@{/books(page=${i}, size=${size})}" th:text="${i + 1}">1</a>
-                    </li>
-
-                    <li class="page-item" th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
-                        <a class="page-link" th:href="@{/books(page=${currentPage + 1}, size=${size})}">Next</a>
-                    </li>
-                </ul>
-            </nav>
-        </main>
-    </div>
+        <nav aria-label="Book pages" class="mt-4" th:if="${totalPages > 0}">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                    <a class="page-link" th:href="@{/books(page=${currentPage - 1}, size=${size})}">Previous</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link" th:href="@{/books(page=${i}, size=${size})}" th:text="${i + 1}">1</a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
+                    <a class="page-link" th:href="@{/books(page=${currentPage + 1}, size=${size})}">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </main>
 </div>
-
-<!-- Bootstrap Bundle with JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

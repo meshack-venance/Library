@@ -5,168 +5,149 @@
     <title th:text="${title}">Library Reports</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/app.css}" rel="stylesheet">
 </head>
-<body class="bg-light">
-
-<div class="container-fluid">
-    <!-- Top bar for mobile -->
-    <div class="d-md-none p-2 bg-white border-bottom">
-        <button class="btn btn-outline-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
-            ☰ Menu
-        </button>
-    </div>
-
-    <div class="row">
-        <!-- Offcanvas Sidebar -->
-        <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="sidebarMenu">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title text-primary">Library System</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+<body>
+<div class="app-shell d-lg-flex">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <main class="app-main">
+        <header class="page-header">
+            <div>
+                <div class="page-kicker">Insights</div>
+                <h1 class="page-title" th:text="${title}">Library Reports</h1>
+                <p class="page-subtitle">Review borrowing activity, active users, and overdue books.</p>
             </div>
-            <div class="offcanvas-body">
-                <ul class="nav flex-column">
-                    <li class="nav-item"><a class="nav-link" href="/admin">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/books">Books</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/users">Users</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/transactions">Transactions</a></li>
-                    <li class="nav-item"><a class="nav-link active fw-bold" href="/reports">Reports</a></li>
-                </ul>
+            <a th:href="@{/reports/download}" class="btn btn-danger">
+                <i class="bi bi-file-earmark-pdf me-1"></i>Download PDF
+            </a>
+        </header>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-label">Total Transactions</div>
+                    <div class="stat-value" th:text="${totalTransactions}">0</div>
+                    <p class="text-muted mb-0">All recorded borrowing activity.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-label">Top Books Listed</div>
+                    <div class="stat-value" th:text="${#lists.size(topBooks)}">0</div>
+                    <p class="text-muted mb-0">Borrowing leaders by title and grade.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-label">Overdue Items</div>
+                    <div class="stat-value" th:text="${#lists.size(overdues)}">0</div>
+                    <p class="text-muted mb-0">Transactions needing follow-up.</p>
+                </div>
             </div>
         </div>
 
-        <!-- Static Sidebar -->
-        <nav class="col-md-3 col-lg-2 d-none d-md-block bg-white border-end py-4">
-            <h4 class="text-primary text-center">Library System</h4>
-            <ul class="nav flex-column mt-4">
-                <li class="nav-item"><a class="nav-link" href="/admin">Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" href="/books">Books</a></li>
-                <li class="nav-item"><a class="nav-link" href="/users">Users</a></li>
-                <li class="nav-item"><a class="nav-link" href="/transactions">Transactions</a></li>
-                <li class="nav-item"><a class="nav-link active fw-bold" href="/reports">Reports</a></li>
-            </ul>
-        </nav>
-
-        <!-- Main Content -->
-        <main class="col-md-9 col-lg-10 px-4 py-4">
-            <div class="text-center mb-5">
-                <h1 class="display-5 fw-bold text-primary">
-                    <i class="bi bi-bar-chart-line-fill"></i> <span th:text="${title}">Library Reports</span>
-                </h1>
-                <p class="text-muted">Real-time overview of library activity</p>
-                <a href="/reports/download" class="btn btn-outline-danger mt-2">
-                    <i class="bi bi-file-earmark-pdf-fill me-2"></i>Download PDF Report
-                </a>
-            </div>
-
-            <!-- Total Transactions -->
-            <div class="row justify-content-center mb-4">
-                <div class="col-md-6 col-lg-4">
-                    <div class="card text-white bg-primary shadow">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Total Transactions</h5>
-                            <h1 class="display-4 fw-bold" th:text="${totalTransactions}">0</h1>
-                        </div>
+        <div class="row g-4">
+            <div class="col-xl-6">
+                <section class="surface">
+                    <div class="surface-pad border-bottom">
+                        <h2 class="h5 fw-bold mb-1">Top Borrowed Books</h2>
+                        <p class="text-muted mb-0">Grouped by title and grade level.</p>
                     </div>
-                </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Title</th>
+                                <th>Grade</th>
+                                <th>Borrow Count</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="book, iStat : ${topBooks}">
+                                <td th:text="${iStat.count}">1</td>
+                                <td class="fw-semibold" th:text="${book.title}">Sample Title</td>
+                                <td><span class="badge text-bg-light" th:text="${book.gradeLevel}">Grade</span></td>
+                                <td th:text="${book.borrowCount}">0</td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(topBooks)}">
+                                <td colspan="4"><div class="empty-state">No borrowed books found.</div></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
             </div>
 
-            <!-- Top Borrowed Books -->
-            <div class="mb-5">
-                <h3 class="text-primary mb-3">Top Borrowed Books by Title & Grade Level</h3>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped text-center align-middle">
-                        <thead class="table-primary">
-                        <tr>
-                            <th>#</th>
-                            <th>Title</th>
-                            <th>Grade Level</th>
-                            <th>Borrow Count</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="book, iStat : ${topBooks}">
-                            <td th:text="${iStat.count}">1</td>
-                            <td th:text="${book.title}">Sample Title</td>
-                            <td th:text="${book.gradeLevel}">Grade</td>
-                            <td th:text="${book.borrowCount}">0</td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(topBooks)}">
-                            <td colspan="4" class="text-muted">No borrowed books found.</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="col-xl-6">
+                <section class="surface">
+                    <div class="surface-pad border-bottom">
+                        <h2 class="h5 fw-bold mb-1">Top Active Users</h2>
+                        <p class="text-muted mb-0">Users with the highest borrowing activity.</p>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="user, iStat : ${activeUsers}">
+                                <td th:text="${iStat.count}">1</td>
+                                <td class="fw-semibold" th:text="${user.fullName}">User Name</td>
+                                <td th:text="${user.email}">Email</td>
+                                <td th:text="${user.totalBorrowed}">0</td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(activeUsers)}">
+                                <td colspan="4"><div class="empty-state">No active users.</div></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
             </div>
+        </div>
 
-            <!-- Top Active Users -->
-            <div class="mb-5">
-                <h3 class="text-success mb-3">Top Active Users</h3>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped text-center align-middle">
-                        <thead class="table-success">
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Total Borrowed</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="user, iStat : ${activeUsers}">
-                            <td th:text="${iStat.count}">1</td>
-                            <td th:text="${user.fullName}">User Name</td>
-                            <td th:text="${user.email}">Email</td>
-                            <td th:text="${user.totalBorrowed}">0</td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(activeUsers)}">
-                            <td colspan="4" class="text-muted">No active users.</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+        <section class="surface mt-4">
+            <div class="surface-pad border-bottom">
+                <h2 class="h5 fw-bold mb-1">Overdue Transactions</h2>
+                <p class="text-muted mb-0">Books that have passed their expected return date.</p>
             </div>
-
-            <!-- Overdue Transactions -->
-            <div>
-                <h3 class="text-danger mb-3">Overdue Transactions</h3>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped text-center align-middle">
-                        <thead class="table-danger">
-                        <tr>
-                            <th>#</th>
-                            <th>Book Title</th>
-                            <th>User</th>
-                            <th>Grade Level</th>
-                            <th>Borrow Date</th>
-                            <th>Due Date</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="tx, iStat : ${overdues}">
-                            <td th:text="${iStat.count}">1</td>
-                            <td th:text="${tx.bookTitle}">Book Title</td>
-                            <td th:text="${tx.fullName}">User</td>
-                            <td th:text="${tx.gradeLevel}">Grade</td>
-                            <td th:text="${#temporals.format(tx.borrowDate, 'yyyy-MM-dd')}">2025-01-01</td>
-                            <td th:text="${#temporals.format(tx.returnDate, 'yyyy-MM-dd')}">2025-01-10</td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(overdues)}">
-                            <td colspan="6" class="text-muted">No overdue transactions.</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Book Title</th>
+                        <th>User</th>
+                        <th>Grade</th>
+                        <th>Borrow Date</th>
+                        <th>Due Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="tx, iStat : ${overdues}">
+                        <td th:text="${iStat.count}">1</td>
+                        <td class="fw-semibold" th:text="${tx.bookTitle}">Book Title</td>
+                        <td th:text="${tx.fullName}">User</td>
+                        <td><span class="badge text-bg-light" th:text="${tx.gradeLevel}">Grade</span></td>
+                        <td th:text="${#temporals.format(tx.borrowDate, 'yyyy-MM-dd')}">2025-01-01</td>
+                        <td th:text="${#temporals.format(tx.returnDate, 'yyyy-MM-dd')}">2025-01-10</td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(overdues)}">
+                        <td colspan="6"><div class="empty-state">No overdue transactions.</div></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-
-            <!-- Footer Note -->
-            <div class="alert alert-secondary mt-5">
-                <strong>Note:</strong> Borrow counts are grouped by <em>Book Title</em> and <em>Grade Level</em>. Each book is counted once per transaction.
-            </div>
-        </main>
-    </div>
+        </section>
+    </main>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

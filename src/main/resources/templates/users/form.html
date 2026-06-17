@@ -5,124 +5,106 @@
     <title th:text="${title}">User Form</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/app.css}" rel="stylesheet">
 </head>
-<body class="bg-light">
-
-<div class="container-fluid">
-    <!-- Top bar for small screens -->
-    <div class="d-md-none p-2 bg-white border-bottom">
-        <button class="btn btn-outline-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
-            ☰ Menu
-        </button>
-    </div>
-
-    <div class="row min-vh-100">
-        <!-- Sidebar for small screens -->
-        <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="sidebarMenu">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title text-primary">Library System</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+<body>
+<div class="app-shell d-lg-flex">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <main class="app-main">
+        <header class="page-header">
+            <div>
+                <div class="page-kicker">People</div>
+                <h1 class="page-title" th:text="${title}">User Form</h1>
+                <p class="page-subtitle">Register students and teachers for borrowing workflows.</p>
             </div>
-            <div class="offcanvas-body">
-                <ul class="nav flex-column">
-                    <li class="nav-item"><a class="nav-link" th:href="@{/admin}">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/books}">Books</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/users}">Users</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/transactions}">Transactions</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/reports}">Reports</a></li>
-                </ul>
+            <a th:href="@{/users}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Back
+            </a>
+        </header>
+
+        <div class="row g-4">
+            <div class="col-xl-8">
+                <section class="surface surface-pad">
+                    <form th:action="@{/users}" th:object="${userDto}" method="post" class="needs-validation" novalidate>
+                        <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
+                            <ul class="mb-0">
+                                <li th:each="err : ${#fields.globalErrors()}" th:text="${err}"></li>
+                            </ul>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="firstName" class="form-label">First Name</label>
+                                <input type="text" th:field="*{firstName}" id="firstName" class="form-control" required />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Invalid</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="middleName" class="form-label">Middle Name</label>
+                                <input type="text" th:field="*{middleName}" id="middleName" class="form-control" required />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('middleName')}" th:errors="*{middleName}">Invalid</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="lastName" class="form-label">Last Name</label>
+                                <input type="text" th:field="*{lastName}" id="lastName" class="form-control" required />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Invalid</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="userType" class="form-label">User Type</label>
+                                <select th:field="*{userType}" id="userType" class="form-select" required onchange="toggleClassroomField()">
+                                    <option value="" disabled>Select user type</option>
+                                    <option value="TEACHER">Teacher</option>
+                                    <option value="STUDENT">Student</option>
+                                </select>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('userType')}" th:errors="*{userType}">Invalid</div>
+                            </div>
+                            <div class="col-md-6" id="emailGroup" th:classappend="${userDto.userType != 'TEACHER'} ? 'd-none'">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" th:field="*{email}" id="email" class="form-control" />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Invalid</div>
+                            </div>
+                            <div class="col-md-6" id="classroomGroup" th:classappend="${userDto.userType != 'STUDENT'} ? 'd-none'">
+                                <label for="clsRoom" class="form-label">Classroom</label>
+                                <select th:field="*{clsRoom}" id="clsRoom" class="form-select">
+                                    <option value="">Select classroom</option>
+                                    <option value="Form I">Form I</option>
+                                    <option value="Form II">Form II</option>
+                                    <option value="Form III">Form III</option>
+                                    <option value="Form IV">Form IV</option>
+                                    <option value="Form V">Form V</option>
+                                    <option value="Form VI">Form VI</option>
+                                </select>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('clsRoom')}" th:errors="*{clsRoom}">Invalid</div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a th:href="@{/users}" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check2 me-1"></i>Save User
+                            </button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+
+            <div class="col-xl-4">
+                <section class="surface surface-pad">
+                    <h2 class="h5 fw-bold mb-2">Import Users</h2>
+                    <p class="text-muted">Upload an Excel file to add users in bulk.</p>
+                    <form th:action="@{/users/import}" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="file" class="form-label">Excel File</label>
+                            <input type="file" name="file" id="file" class="form-control" accept=".xlsx,.xls" required>
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-upload me-1"></i>Import
+                        </button>
+                    </form>
+                </section>
             </div>
         </div>
-
-        <!-- Sidebar for medium+ screens -->
-        <nav class="col-md-3 col-lg-2 d-none d-md-flex flex-column bg-white border-end py-4 px-3">
-            <h4 class="text-primary text-center">Library System</h4>
-            <ul class="nav flex-column mt-4">
-                <li class="nav-item"><a class="nav-link" th:href="@{/admin}">Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/books}">Books</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/users}">Users</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/transactions}">Transactions</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/reports}">Reports</a></li>
-            </ul>
-        </nav>
-
-        <!-- Main content -->
-        <main class="col-md-9 col-lg-10 px-4 py-4">
-            <h2 th:text="${title}" class="mb-4">User Form</h2>
-            <form th:action="@{/users}" th:object="${userDto}" method="post" class="needs-validation" novalidate>
-
-                <!-- Global error messages -->
-                <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
-                    <ul class="mb-0">
-                        <li th:each="err : ${#fields.globalErrors()}" th:text="${err}"></li>
-                    </ul>
-                </div>
-
-                <div class="mb-3">
-                    <label for="firstName" class="form-label">First Name</label>
-                    <input type="text" th:field="*{firstName}" id="firstName" class="form-control" placeholder="Enter first name" required />
-                    <div class="invalid-feedback" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Invalid</div>
-                </div>
-
-                <div class="mb-3">
-                    <label for="middleName" class="form-label">Middle Name</label>
-                    <input type="text" th:field="*{middleName}" id="middleName" class="form-control" placeholder="Enter middle name" required />
-                    <div class="invalid-feedback" th:if="${#fields.hasErrors('middleName')}" th:errors="*{middleName}">Invalid</div>
-                </div>
-
-                <div class="mb-3">
-                    <label for="lastName" class="form-label">Last Name</label>
-                    <input type="text" th:field="*{lastName}" id="lastName" class="form-control" placeholder="Enter last name" required />
-                    <div class="invalid-feedback" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Invalid</div>
-                </div>
-
-                <div class="mb-3">
-                    <label for="userType" class="form-label">User Type</label>
-                    <select th:field="*{userType}" id="userType" class="form-select" required onchange="toggleClassroomField()">
-                        <option value="" disabled>Select user type</option>
-                        <option value="TEACHER">Teacher</option>
-                        <option value="STUDENT">Student</option>
-                    </select>
-                    <div class="invalid-feedback" th:if="${#fields.hasErrors('userType')}" th:errors="*{userType}">Invalid</div>
-                </div>
-
-                <div class="mb-3" id="emailGroup" th:classappend="${userDto.userType != 'TEACHER'} ? 'd-none'">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" th:field="*{email}" id="email" class="form-control" placeholder="Enter email" />
-                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Invalid</div>
-                </div>
-
-                <div class="mb-3" id="classroomGroup" th:classappend="${userDto.userType != 'STUDENT'} ? 'd-none'">
-                    <label for="clsRoom" class="form-label">Classroom</label>
-                    <select th:field="*{clsRoom}" id="clsRoom" class="form-select">
-                        <option value="">-- Select Classroom --</option>
-                        <option value="Form I">Form I</option>
-                        <option value="Form II">Form II</option>
-                        <option value="Form III">Form III</option>
-                        <option value="Form IV">Form IV</option>
-                        <option value="Form V">Form V</option>
-                        <option value="Form VI">Form VI</option>
-                    </select>
-                    <div class="invalid-feedback" th:if="${#fields.hasErrors('clsRoom')}" th:errors="*{clsRoom}">Invalid</div>
-                </div>
-
-                <button type="submit" class="btn btn-primary">Save</button>
-                <a th:href="@{/users}" class="btn btn-secondary ms-2">Cancel</a>
-            </form>
-
-            <hr class="my-5">
-
-            <h4>Import Users from Excel</h4>
-            <form th:action="@{/users/import}" method="post" enctype="multipart/form-data">
-                <div class="mb-3">
-                    <label for="file" class="form-label">Choose Excel file</label>
-                    <input type="file" name="file" id="file" class="form-control" accept=".xlsx,.xls" required>
-                </div>
-                <button type="submit" class="btn btn-success">Import</button>
-            </form>
-
-        </main>
-    </div>
+    </main>
 </div>
 
 <script>
@@ -163,7 +145,6 @@
         });
     })();
 </script>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
