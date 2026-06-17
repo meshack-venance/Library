@@ -46,9 +46,11 @@ The application reads database settings from environment variables:
 DB_URL=jdbc:postgresql://localhost:5432/library
 DB_USER=your_database_user
 DB_PASSWORD=your_database_password
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=change_this_password
 ```
 
-Create a PostgreSQL database first, then make sure these variables are available in the shell or runtime environment where the app starts.
+Create a PostgreSQL database first, then make sure these variables are available in the shell or runtime environment where the app starts. `ADMIN_USERNAME` and `ADMIN_PASSWORD` are used only when the first admin account is created.
 
 Configuration lives in `src/main/resources/application.yml`. The tracked file uses environment-variable placeholders instead of real secrets. For local-only values, use environment variables or ignored files such as:
 
@@ -91,11 +93,11 @@ http://localhost:8080
 On first startup, the app creates a default admin account if no admin exists:
 
 ```text
-Username: admin
-Password: password
+Username: value of ADMIN_USERNAME, or admin if unset
+Password: value of ADMIN_PASSWORD, or password if unset
 ```
 
-Change this password after signing in.
+Set `ADMIN_PASSWORD` before the first startup in any shared or production-like environment, then change the password after signing in.
 
 ## Run Tests
 

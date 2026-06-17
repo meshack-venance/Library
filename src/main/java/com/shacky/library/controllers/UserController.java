@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-
 @Controller
 @RequestMapping("/users")
 public class UserController {
@@ -80,9 +78,6 @@ public class UserController {
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
         UserDto userDto = userService.getUserById(id);
-        if (userDto == null) {
-            return "redirect:/users";  // Or show 404 page
-        }
         model.addAttribute("userDto", userDto);
         model.addAttribute("title", "Edit User");
         return "users/form";
@@ -112,9 +107,6 @@ public class UserController {
     @GetMapping("/{id}")
     public String viewUser(@PathVariable Long id, Model model) {
         UserDto userDto = userService.getUserById(id);
-        if (userDto == null) {
-            return "redirect:/users";
-        }
         model.addAttribute("userDto", userDto);
         model.addAttribute("title", "User Details");
         return "users/view";  // Thymeleaf template: users/view.html

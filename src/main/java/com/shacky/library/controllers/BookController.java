@@ -1,5 +1,6 @@
 package com.shacky.library.controllers;
 
+import com.shacky.library.common.exception.ResourceNotFoundException;
 import com.shacky.library.dtos.BookDto;
 import com.shacky.library.services.BookService;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +13,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/books")
@@ -44,6 +43,7 @@ public class BookController {
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("book", new BookDto());
+        model.addAttribute("title", "Add New Book");
         return "books/form";
     }
 
@@ -64,11 +64,10 @@ public class BookController {
     // 4. Show form to edit book
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
-        Optional<BookDto> optionalBook = bookService.getBookById(id);
-        if (optionalBook.isEmpty()) {
-            return "redirect:/books";
-        }
-        model.addAttribute("book", optionalBook.get());
+        BookDto book = bookService.getBookById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + id));
+        model.addAttribute("book", book);
+        model.addAttribute("title", "Edit Book");
         return "books/form";
     }
 
@@ -82,11 +81,9 @@ public class BookController {
     // 6. View book details
     @GetMapping("/{id}")
     public String viewBookDetails(@PathVariable Long id, Model model) {
-        Optional<BookDto> optionalBook = bookService.getBookById(id);
-        if (optionalBook.isEmpty()) {
-            return "redirect:/books";
-        }
-        model.addAttribute("book", optionalBook.get());
+        BookDto book = bookService.getBookById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + id));
+        model.addAttribute("book", book);
         return "books/details";
     }
 

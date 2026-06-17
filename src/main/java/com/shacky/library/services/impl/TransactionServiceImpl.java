@@ -1,5 +1,7 @@
 package com.shacky.library.services.impl;
 
+import com.shacky.library.common.exception.BusinessRuleException;
+import com.shacky.library.common.exception.ResourceNotFoundException;
 import com.shacky.library.dtos.TransactionDto;
 import com.shacky.library.entities.Book;
 import com.shacky.library.entities.Transaction;
@@ -49,10 +51,10 @@ public class TransactionServiceImpl implements TransactionService {
 
     private Transaction mapToEntity(TransactionDto dto) {
         Book book = bookRepository.findById(dto.getBookId())
-                .orElseThrow(() -> new RuntimeException("Book not found with ID: " + dto.getBookId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + dto.getBookId()));
 
         User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + dto.getUserId()));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + dto.getUserId()));
 
         return Transaction.builder()
                 .book(book)
@@ -77,7 +79,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public TransactionDto updateTransaction(Long id, TransactionDto dto) {
         Transaction transaction = transactionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transaction not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found with ID: " + id));
 
         transaction.setStatus(dto.getStatus());
         transaction.setBorrowDate(dto.getBorrowDate());
@@ -90,7 +92,7 @@ public class TransactionServiceImpl implements TransactionService {
     public TransactionDto getTransactionById(Long id) {
         return transactionRepository.findById(id)
                 .map(this::mapToDto)
-                .orElseThrow(() -> new RuntimeException("Transaction not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found with ID: " + id));
     }
 
     @Override
@@ -130,10 +132,10 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public TransactionDto returnBook(Long transactionId) {
         Transaction transaction = transactionRepository.findById(transactionId)
-                .orElseThrow(() -> new RuntimeException("Transaction not found with ID: " + transactionId));
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found with ID: " + transactionId));
 
         if (!"borrowed".equals(transaction.getStatus())) {
-            throw new IllegalStateException("Book is not currently borrowed.");
+            throw new BusinessRuleException("Book is not currently borrowed.");
         }
 
         transaction.setStatus("returned");

@@ -14,3 +14,8 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+
+app:
+  admin:
+    username: admin
+    password: change_this_password

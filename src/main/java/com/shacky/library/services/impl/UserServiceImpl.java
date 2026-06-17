@@ -1,5 +1,7 @@
 package com.shacky.library.services.impl;
 
+import com.shacky.library.common.exception.DuplicateResourceException;
+import com.shacky.library.common.exception.ResourceNotFoundException;
 import com.shacky.library.dtos.UserDto;
 import com.shacky.library.entities.User;
 import com.shacky.library.repositories.UserRepository;
@@ -61,8 +63,7 @@ public class UserServiceImpl implements UserService {
         );
 
         if (existingUser.isPresent()) {
-            // Optional: throw a custom exception or return null/DTO
-            throw new IllegalArgumentException("User with the same full name already exists.");
+            throw new DuplicateResourceException("User with the same full name already exists.");
         }
 
         User user = toEntity(userDto);
@@ -83,14 +84,14 @@ public class UserServiceImpl implements UserService {
                     User updated = userRepository.save(existingUser);
                     return toDto(updated);
                 })
-                .orElse(null);
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
     }
 
     @Override
     public UserDto getUserById(Long id) {
         return userRepository.findById(id)
                 .map(this::toDto)
-                .orElse(null);
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
     }
 
     @Override
