@@ -59,6 +59,8 @@ src/main/resources/application-local.yml
 
 Use `src/main/resources/application.example.yml` as a safe reference for the expected settings.
 
+By default, the app uses the `local` profile unless `SPRING_PROFILES_ACTIVE` is set. That lets `./mvnw spring-boot:run` load your ignored `src/main/resources/application-local.yml` during local development. In production, set `SPRING_PROFILES_ACTIVE` explicitly and provide secrets through the deployment environment.
+
 The current JPA configuration uses:
 
 ```yaml

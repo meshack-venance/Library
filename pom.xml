@@ -97,8 +97,9 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.11.0</version>
 				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
+					<release>${java.version}</release>
+					<fork>true</fork>
+					<executable>/usr/lib/jvm/java-17-openjdk-amd64/bin/javac</executable>
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.projectlombok</groupId>
