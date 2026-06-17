@@ -13,15 +13,18 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
 
+    private static final String USER_FORM_VIEW = "users/form";
+    private static final String REDIRECT_USERS = "redirect:/users";
+
     private final UserService userService;
 
-    // List all users
     @GetMapping
     public String listUsers(@RequestParam(defaultValue = "0") int page,
                             @RequestParam(defaultValue = "10") int size,
@@ -40,12 +43,10 @@ public class UserController {
         return "users/list";
     }
 
-
     @GetMapping("/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("userDto", new UserDto());
-        model.addAttribute("title", "Add New User");
-        return "users/form";
+        addUserFormAttributes(model, new UserDto(), "Add New User");
+        return USER_FORM_VIEW;
     }
 
     @PostMapping
@@ -63,64 +64,59 @@ public class UserController {
         }
 
         if (result.hasErrors()) {
-            model.addAttribute("title", "Add New User");
-            return "users/form";
+            addUserFormAttributes(model, userDto, "Add New User");
+            return USER_FORM_VIEW;
         }
 
         userService.createUser(userDto);
-        return "redirect:/users";
+        return REDIRECT_USERS;
     }
 
-
-
-
-    // Show form to edit existing user
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
-        UserDto userDto = userService.getUserById(id);
-        model.addAttribute("userDto", userDto);
-        model.addAttribute("title", "Edit User");
-        return "users/form";
+        addUserFormAttributes(model, userService.getUserById(id), "Edit User");
+        return USER_FORM_VIEW;
     }
 
-    // Handle POST to update existing user
     @PostMapping("/edit/{id}")
     public String updateUser(@PathVariable Long id,
                              @Valid @ModelAttribute("userDto") UserDto userDto,
                              BindingResult result, Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("title", "Edit User");
-            return "users/form";
+            addUserFormAttributes(model, userDto, "Edit User");
+            return USER_FORM_VIEW;
         }
         userService.updateUser(id, userDto);
-        return "redirect:/users";
+        return REDIRECT_USERS;
     }
 
-    // Delete user by id
     @GetMapping("/delete/{id}")
     public String deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
-        return "redirect:/users";
+        return REDIRECT_USERS;
     }
 
-    // Optional: View user details
     @GetMapping("/{id}")
     public String viewUser(@PathVariable Long id, Model model) {
-        UserDto userDto = userService.getUserById(id);
-        model.addAttribute("userDto", userDto);
+        model.addAttribute("userDto", userService.getUserById(id));
         model.addAttribute("title", "User Details");
-        return "users/view";  // Thymeleaf template: users/view.html
+        return "users/view";
     }
 
     @PostMapping("/import")
-    public String importUsersFromExcel(@RequestParam("file") MultipartFile file, Model model) {
+    public String importUsersFromExcel(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
         try {
             userService.importUsersFromExcel(file);
-            model.addAttribute("success", "Users imported successfully.");
+            redirectAttributes.addFlashAttribute("success", "Users imported successfully.");
         } catch (Exception e) {
-            model.addAttribute("error", "Failed to import users: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Failed to import users: " + e.getMessage());
         }
-        return "redirect:/users";
+        return REDIRECT_USERS;
+    }
+
+    private void addUserFormAttributes(Model model, UserDto userDto, String title) {
+        model.addAttribute("userDto", userDto);
+        model.addAttribute("title", title);
     }
 
 }

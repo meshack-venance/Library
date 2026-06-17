@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class AdminController {
 
-    private final LibraryService service;
+    private static final String CHANGE_PASSWORD_VIEW = "admin/change-password";
 
+    private final LibraryService libraryService;
     private final AdminRepository adminRepository;
-
     private final BCryptPasswordEncoder encoder;
 
     @GetMapping("/login")
@@ -33,9 +33,9 @@ public class AdminController {
     @GetMapping
     public String dashboard(Model model) {
         model.addAttribute("title", "Dashboard");
-        model.addAttribute("totalBooks", service.countBooks());
-        model.addAttribute("totalUsers", service.countUsers());
-        model.addAttribute("borrowedCount", service.countBorrowedBooks());
+        model.addAttribute("totalBooks", libraryService.countBooks());
+        model.addAttribute("totalUsers", libraryService.countUsers());
+        model.addAttribute("borrowedCount", libraryService.countBorrowedBooks());
         model.addAttribute("content", "dashboard");
         return "layout";
     }
@@ -43,7 +43,7 @@ public class AdminController {
     @GetMapping("/change-password")
     public String showChangePasswordForm(Model model) {
         model.addAttribute("title", "Change Password");
-        return "admin/change-password";
+        return CHANGE_PASSWORD_VIEW;
     }
 
     @PostMapping("/change-password")
@@ -61,17 +61,17 @@ public class AdminController {
 
         if (admin == null || !encoder.matches(currentPassword, admin.getPassword())) {
             model.addAttribute("error", "Current password is incorrect.");
-            return "admin/change-password";
+            return CHANGE_PASSWORD_VIEW;
         }
 
         if (!newPassword.equals(confirmPassword)) {
             model.addAttribute("error", "New passwords do not match.");
-            return "admin/change-password";
+            return CHANGE_PASSWORD_VIEW;
         }
 
         admin.setPassword(encoder.encode(newPassword));
         adminRepository.save(admin);
         model.addAttribute("success", "Password updated successfully.");
-        return "admin/change-password";
+        return CHANGE_PASSWORD_VIEW;
     }
 }

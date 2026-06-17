@@ -19,9 +19,11 @@ import org.springframework.data.domain.Pageable;
 @RequiredArgsConstructor
 public class BookController {
 
+    private static final String BOOK_FORM_VIEW = "books/form";
+    private static final String REDIRECT_BOOKS = "redirect:/books";
+
     private final BookService bookService;
 
-    // 1. List all books
     @GetMapping
     public String listBooks(@RequestParam(defaultValue = "0") int page,
                             @RequestParam(defaultValue = "10") int size,
@@ -39,51 +41,40 @@ public class BookController {
         return "books/list";
     }
 
-    // 2. Show form to add new book
     @GetMapping("/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("book", new BookDto());
-        model.addAttribute("title", "Add New Book");
-        return "books/form";
+        addBookFormAttributes(model, new BookDto(), "Add New Book");
+        return BOOK_FORM_VIEW;
     }
 
-    // 3. Save new or updated book
     @PostMapping("/save")
     public String saveBook(@ModelAttribute("book") BookDto bookDto,
                            BindingResult result,
                            Model model) {
         if (result.hasErrors()) {
-            return "books/form";
+            addBookFormAttributes(model, bookDto, "Book Form");
+            return BOOK_FORM_VIEW;
         }
 
-
         bookService.saveBook(bookDto);
-        return "redirect:/books";
+        return REDIRECT_BOOKS;
     }
 
-    // 4. Show form to edit book
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
-        BookDto book = bookService.getBookById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + id));
-        model.addAttribute("book", book);
-        model.addAttribute("title", "Edit Book");
-        return "books/form";
+        addBookFormAttributes(model, findBook(id), "Edit Book");
+        return BOOK_FORM_VIEW;
     }
 
-    // 5. Delete a book
     @GetMapping("/delete/{id}")
     public String deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
-        return "redirect:/books";
+        return REDIRECT_BOOKS;
     }
 
-    // 6. View book details
     @GetMapping("/{id}")
     public String viewBookDetails(@PathVariable Long id, Model model) {
-        BookDto book = bookService.getBookById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + id));
-        model.addAttribute("book", book);
+        model.addAttribute("book", findBook(id));
         return "books/details";
     }
 
@@ -95,7 +86,17 @@ public class BookController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to import: " + e.getMessage());
         }
-        return "redirect:/books";
+        return REDIRECT_BOOKS;
+    }
+
+    private BookDto findBook(Long id) {
+        return bookService.getBookById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + id));
+    }
+
+    private void addBookFormAttributes(Model model, BookDto book, String title) {
+        model.addAttribute("book", book);
+        model.addAttribute("title", title);
     }
 
 }

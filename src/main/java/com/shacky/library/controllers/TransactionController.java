@@ -15,97 +15,74 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TransactionController {
 
+    private static final String TRANSACTION_FORM_VIEW = "transactions/form";
+    private static final String TRANSACTION_LIST_VIEW = "transactions/list";
+    private static final String REDIRECT_TRANSACTIONS = "redirect:/transactions";
+
     private final TransactionService transactionService;
 
-    // List all transactions + Search by user
     @GetMapping
     public String listTransactions(@RequestParam(required = false) String search, Model model) {
-        List<TransactionDto> transactions;
-        if (search != null && !search.isBlank()) {
-            transactions = transactionService.searchTransactionsByUser(search);
-        } else {
-            transactions = transactionService.getAllTransactions();
-        }
-        model.addAttribute("transactions", transactions);
-        model.addAttribute("title", "Transaction List");
-        return "transactions/list";
+        addTransactionListAttributes(model, findTransactions(search), "Transaction List");
+        return TRANSACTION_LIST_VIEW;
     }
 
-    // Show form to create new transaction
     @GetMapping("/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("transactionDto", new TransactionDto());
-        model.addAttribute("title", "New Transaction");
-        return "transactions/form";
+        addTransactionFormAttributes(model, new TransactionDto(), "New Transaction", null);
+        return TRANSACTION_FORM_VIEW;
     }
 
-    // Handle form submission to create new transaction
     @PostMapping
     public String createTransaction(@ModelAttribute TransactionDto transactionDto, Model model) {
         try {
             transactionService.createTransaction(transactionDto);
-            return "redirect:/transactions";
+            return REDIRECT_TRANSACTIONS;
         } catch (RuntimeException ex) {
-            model.addAttribute("transactionDto", transactionDto);
-            model.addAttribute("title", "New Transaction");
-            model.addAttribute("errorMessage", ex.getMessage());
-            return "transactions/form";
+            addTransactionFormAttributes(model, transactionDto, "New Transaction", ex.getMessage());
+            return TRANSACTION_FORM_VIEW;
         }
     }
 
-    // Show form to edit existing transaction
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
-        TransactionDto dto = transactionService.getTransactionById(id);
-        model.addAttribute("transactionDto", dto);
-        model.addAttribute("title", "Edit Transaction");
-        return "transactions/form";
+        addTransactionFormAttributes(model, transactionService.getTransactionById(id), "Edit Transaction", null);
+        return TRANSACTION_FORM_VIEW;
     }
 
-    // Handle form submission to update transaction
     @PostMapping("/{id}")
     public String updateTransaction(@PathVariable Long id, @ModelAttribute TransactionDto transactionDto, Model model) {
         try {
             transactionService.updateTransaction(id, transactionDto);
-            return "redirect:/transactions";
+            return REDIRECT_TRANSACTIONS;
         } catch (RuntimeException ex) {
-            model.addAttribute("transactionDto", transactionDto);
-            model.addAttribute("title", "Edit Transaction");
-            model.addAttribute("errorMessage", ex.getMessage());
-            return "transactions/form";
+            addTransactionFormAttributes(model, transactionDto, "Edit Transaction", ex.getMessage());
+            return TRANSACTION_FORM_VIEW;
         }
     }
 
-    // Delete transaction
     @GetMapping("/delete/{id}")
     public String deleteTransaction(@PathVariable Long id) {
         transactionService.deleteTransaction(id);
-        return "redirect:/transactions";
+        return REDIRECT_TRANSACTIONS;
     }
 
-    // Return a borrowed book (mark transaction returned)
     @GetMapping("/return/{id}")
     public String returnBook(@PathVariable Long id) {
         transactionService.returnBook(id);
-        return "redirect:/transactions";
+        return REDIRECT_TRANSACTIONS;
     }
 
-    // List transactions for a specific user
     @GetMapping("/user/{userId}")
     public String listTransactionsByUser(@PathVariable Long userId, Model model) {
-        List<TransactionDto> transactions = transactionService.getTransactionsByUserId(userId);
-        model.addAttribute("transactions", transactions);
-        model.addAttribute("title", "User Transactions");
-        return "transactions/list";
+        addTransactionListAttributes(model, transactionService.getTransactionsByUserId(userId), "User Transactions");
+        return TRANSACTION_LIST_VIEW;
     }
 
-    // List transactions for a specific book
     @GetMapping("/book/{bookId}")
     public String listTransactionsByBook(@PathVariable Long bookId, Model model) {
-        List<TransactionDto> transactions = transactionService.getTransactionsByBookId(bookId);
-        model.addAttribute("transactions", transactions);
-        model.addAttribute("title", "Book Transactions");
-        return "transactions/list";
+        addTransactionListAttributes(model, transactionService.getTransactionsByBookId(bookId), "Book Transactions");
+        return TRANSACTION_LIST_VIEW;
     }
 
     @GetMapping("/search/books")
@@ -120,5 +97,24 @@ public class TransactionController {
         return transactionService.searchUserNames(query);
     }
 
+    private List<TransactionDto> findTransactions(String search) {
+        if (search != null && !search.isBlank()) {
+            return transactionService.searchTransactionsByUser(search);
+        }
+        return transactionService.getAllTransactions();
+    }
+
+    private void addTransactionListAttributes(Model model, List<TransactionDto> transactions, String title) {
+        model.addAttribute("transactions", transactions);
+        model.addAttribute("title", title);
+    }
+
+    private void addTransactionFormAttributes(Model model, TransactionDto transactionDto, String title, String errorMessage) {
+        model.addAttribute("transactionDto", transactionDto);
+        model.addAttribute("title", title);
+        if (errorMessage != null) {
+            model.addAttribute("errorMessage", errorMessage);
+        }
+    }
 
 }
