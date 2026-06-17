@@ -50,10 +50,22 @@ DB_PASSWORD=your_database_password
 
 Create a PostgreSQL database first, then make sure these variables are available in the shell or runtime environment where the app starts.
 
+Configuration lives in `src/main/resources/application.yml`. The tracked file uses environment-variable placeholders instead of real secrets. For local-only values, use environment variables or ignored files such as:
+
+```text
+.env
+src/main/resources/application-local.yml
+```
+
+Use `src/main/resources/application.example.yml` as a safe reference for the expected settings.
+
 The current JPA configuration uses:
 
-```properties
-spring.jpa.hibernate.ddl-auto=update
+```yaml
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
 ```
 
 This is convenient during development because Hibernate updates the schema automatically. Review this setting before using the app in production.
@@ -145,7 +157,8 @@ src/main/java/com/shacky/library
 src/main/resources
 ├── static          Static assets
 ├── templates       Thymeleaf templates
-└── application.properties
+├── application.yml
+└── application.example.yml
 ```
 
 ## Notes
