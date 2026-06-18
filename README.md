@@ -2,6 +2,8 @@
 
 A Spring Boot MVC web application for managing a school library. The app provides an admin dashboard, book and user management, borrowing transactions, imports from Excel, and downloadable library reports.
 
+Current release: `1.0.0`
+
 ## Features
 
 - Admin login and password management
@@ -79,7 +81,7 @@ src/main/resources/application-local.yml
 
 Use `src/main/resources/application.example.yml` as a safe reference for the expected settings.
 
-By default, the app uses the `local` profile unless `SPRING_PROFILES_ACTIVE` is set. That lets `./mvnw spring-boot:run` load your ignored `src/main/resources/application-local.yml` during local development. In production, set `SPRING_PROFILES_ACTIVE` explicitly and provide secrets through the deployment environment.
+By default, the app uses the `local` profile unless `SPRING_PROFILES_ACTIVE` is set. That lets `./mvnw spring-boot:run` load your ignored `src/main/resources/application-local.yml` during local development. In production, set `SPRING_PROFILES_ACTIVE=prod` and provide secrets through the deployment environment.
 
 The current JPA configuration uses:
 
@@ -90,7 +92,7 @@ spring:
       ddl-auto: update
 ```
 
-This is convenient during development because Hibernate updates the schema automatically. Review this setting before using the app in production.
+This is convenient during development because Hibernate updates the schema automatically. The production profile uses `ddl-auto: validate`, disables SQL logging, and requires admin bootstrap credentials from environment variables.
 
 ## Run Locally
 
@@ -131,22 +133,42 @@ Set `ADMIN_PASSWORD` before the first startup in any shared or production-like e
 
 The packaged application will be created under `target/`.
 
+## Production Run
+
+Set the production profile and provide all required environment variables:
+
+```bash
+export SPRING_PROFILES_ACTIVE=prod
+export DB_URL=jdbc:postgresql://localhost:5432/library
+export DB_USER=your_database_user
+export DB_PASSWORD=your_database_password
+export ADMIN_USERNAME=admin
+export ADMIN_PASSWORD=use_a_strong_password
+
+java -jar target/library-1.0.0.jar
+```
+
+The production profile validates the existing database schema instead of updating it automatically. Make sure the schema exists before startup.
+
 ## Docker
 
 Build the image:
 
 ```bash
-docker build -t library-management-system .
+docker build -t library-management-system:1.0.0 .
 ```
 
 Run the container:
 
 ```bash
 docker run -p 8080:8080 \
+  -e SPRING_PROFILES_ACTIVE=prod \
   -e DB_URL=jdbc:postgresql://host.docker.internal:5432/library \
   -e DB_USER=your_database_user \
   -e DB_PASSWORD=your_database_password \
-  library-management-system
+  -e ADMIN_USERNAME=admin \
+  -e ADMIN_PASSWORD=use_a_strong_password \
+  library-management-system:1.0.0
 ```
 
 If PostgreSQL is running somewhere other than the host machine, update `DB_URL` accordingly.

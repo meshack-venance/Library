@@ -37,6 +37,5 @@ build/
 .env.*
 src/main/resources/application-local.yml
 src/main/resources/application-dev.yml
-src/main/resources/application-prod.yml
 src/main/resources/application-secret.yml
 src/main/resources/application-secrets.yml
