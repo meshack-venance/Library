@@ -118,6 +118,7 @@ Password: value of ADMIN_PASSWORD, or password if unset
 ```
 
 Set `ADMIN_PASSWORD` before the first startup in any shared or production-like environment, then change the password after signing in.
+The application validates admin bootstrap settings at startup; the password must be at least 8 characters.
 
 ## Run Tests
 
