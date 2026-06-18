@@ -90,7 +90,7 @@ public class UserController {
         return REDIRECT_USERS;
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return REDIRECT_USERS;

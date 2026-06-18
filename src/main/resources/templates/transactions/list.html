@@ -71,11 +71,18 @@
                         <td>
                             <div class="d-flex justify-content-end gap-2">
                                 <a th:href="@{'/transactions/edit/' + ${tx.id}}" class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></a>
-                                <a th:href="@{'/transactions/delete/' + ${tx.id}}" class="btn btn-sm btn-danger" title="Delete"
-                                   onclick="return confirm('Are you sure you want to delete this transaction?')"><i class="bi bi-trash"></i></a>
-                                <a th:if="${tx.status == 'borrowed'}"
-                                   th:href="@{'/transactions/return/' + ${tx.id}}"
-                                   class="btn btn-sm btn-outline-primary" title="Return"><i class="bi bi-arrow-return-left"></i></a>
+                                <form th:action="@{/transactions/delete/{id}(id=${tx.id})}" method="post">
+                                    <button type="submit" class="btn btn-sm btn-danger" title="Delete"
+                                            onclick="return confirm('Are you sure you want to delete this transaction?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                                <form th:if="${tx.status == 'borrowed'}"
+                                      th:action="@{/transactions/return/{id}(id=${tx.id})}" method="post">
+                                    <button type="submit" class="btn btn-sm btn-outline-primary" title="Return">
+                                        <i class="bi bi-arrow-return-left"></i>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>

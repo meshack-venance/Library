@@ -61,13 +61,13 @@ public class TransactionController {
         }
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String deleteTransaction(@PathVariable Long id) {
         transactionService.deleteTransaction(id);
         return REDIRECT_TRANSACTIONS;
     }
 
-    @GetMapping("/return/{id}")
+    @PostMapping("/return/{id}")
     public String returnBook(@PathVariable Long id) {
         transactionService.returnBook(id);
         return REDIRECT_TRANSACTIONS;

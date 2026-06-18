@@ -66,8 +66,12 @@
                         <td>
                             <div class="d-flex justify-content-end gap-2">
                                 <a th:href="@{'/users/edit/' + ${user.id}}" class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></a>
-                                <a th:href="@{'/users/delete/' + ${user.id}}" class="btn btn-sm btn-danger" title="Delete"
-                                   onclick="return confirm('Are you sure you want to delete this user?')"><i class="bi bi-trash"></i></a>
+                                <form th:action="@{/users/delete/{id}(id=${user.id})}" method="post">
+                                    <button type="submit" class="btn btn-sm btn-danger" title="Delete"
+                                            onclick="return confirm('Are you sure you want to delete this user?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>

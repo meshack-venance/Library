@@ -42,8 +42,10 @@
                     <div class="btn-group" role="group">
                         <a th:href="@{'/books/' + ${book.id}}" class="btn btn-sm btn-info text-white">View</a>
                         <a th:href="@{'/books/edit/' + ${book.id}}" class="btn btn-sm btn-warning">Edit</a>
-                        <a th:href="@{'/books/delete/' + ${book.id}}" class="btn btn-sm btn-danger"
-                           onclick="return confirm('Are you sure you want to delete this book?')">Delete</a>
+                        <form th:action="@{/books/delete/{id}(id=${book.id})}" method="post">
+                            <button type="submit" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Are you sure you want to delete this book?')">Delete</button>
+                        </form>
                     </div>
                 </td>
             </tr>
