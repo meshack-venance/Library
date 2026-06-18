@@ -14,7 +14,7 @@
 
 	<groupId>com.shacky</groupId>
 	<artifactId>library</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>Library Management System</name>
 	<description>Web application for managing a school library</description>
 
